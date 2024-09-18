@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My experiment</title>
+    <script src="https://unpkg.com/jspsych@8.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@2.0.0"></script>
+    <link href="https://unpkg.com/jspsych@8.0.0/css/jspsych.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body></body>
+  <script>
+      var jsPsych = initJsPsych();
+        var timeline = [];
+      var instructions = (
+        type: jsPychHtmlKeyboardResponse,
+        stimulus: "In this task, you'll do stuff"
+      ) 
+  </script>
+</html>
