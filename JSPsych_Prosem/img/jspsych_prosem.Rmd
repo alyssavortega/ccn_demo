@@ -1,0 +1,19 @@
+---
+title: "jspsych_prosem"
+author: "Alyssa Ortega"
+date: "2024-09-18"
+output: html_document
+---
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My experiment</title>
+    <script src="https://unpkg.com/jspsych@8.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@2.0.0"></script>
+    <link href="https://unpkg.com/jspsych@8.0.0/css/jspsych.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body></body>
+  <script>
+  </script>
+</html>
