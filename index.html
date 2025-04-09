@@ -1,87 +1,212 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>My experiment</title>
-  <script src="https://unpkg.com/jspsych@8.0.0"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Farm Activity Experiment</title>
+  <link href="https://unpkg.com/jspsych@8.2.1/css/jspsych.css" rel="stylesheet" />
+  <script src="https://unpkg.com/jspsych@8.2.1"></script>
   <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@2.0.0"></script>
   <script src="https://unpkg.com/@jspsych-contrib/plugin-pipe"></script>
-  <link href="https://unpkg.com/jspsych@8.0.0/css/jspsych.css" rel="stylesheet" type="text/css" />
-</head>
-<body></body>
-<script>
-var jsPsych = initJsPsych();
-var timeline = [];
-
-var instructions = {
-  type: jsPsychHtmlKeyboardResponse,
-  stimulus: "Press Y (for Yes) if the sentence was in the story you read. Press N (for No) if the sentence was not in the story you read."
-};
-timeline.push(instructions);
-
-// Sentences for recognition trials
-var storySentences = [
-  { sentence: "I need to get some work done around the farm.", correct_response: "Y" },
-  { sentence: "I gather the hay and take it to the cow.", correct_response: "Y" },
-  { sentence: "I collect eggs from the chicken coop.", correct_response: "Y" },
-  { sentence: "I place the eggs in the nearby basket.", correct_response: "Y" },
-  { sentence: "I gather the pumpkins from the field.", correct_response: "Y" },
-  { sentence: "I bring the pumpkins to the pigs.", correct_response: "Y" },
-  { sentence: "The pigs munch the pumpkins right away.", correct_response: "Y" },
-  { sentence: "I grab the watering can from the barn.", correct_response: "Y" },
-  { sentence: "I water the garden so the vegetables can grow.", correct_response: "Y" },
-  { sentence: "All the animals are fed, and the farm is taken care of.", correct_response: "Y" },
-  { sentence: "I milk the cow and carry the bucket to the house.", correct_response: "N" },
-  { sentence: "I find eggs hidden in the hay and wash them.", correct_response: "N" },
-  { sentence: "I carry the pumpkins into the barn for storage.", correct_response: "N" },
-  { sentence: "The pigs roll around in the mud near the field.", correct_response: "N" },
-  { sentence: "I pour water into the trough for the horses.", correct_response: "N" },
-  { sentence: "I use the watering can to fill the animal's bowl.", correct_response: "N" },
-  { sentence: "The chickens run to the corn I’ve spread for them.", correct_response: "N" },
-  { sentence: "I gather tomatoes from the garden.", correct_response: "N" },
-  { sentence: "I load hay onto the tractor to move it around.", correct_response: "N" },
-  { sentence: "All the animals rest while I fix the fence.", correct_response: "N" },
-];
-
-// Shuffle the sentences for randomization
-const shuffledSentences = jsPsych.randomization.shuffle(storySentences);
-
-// Define recognition trial for each sentence
-var recognitionTrials = shuffledSentences.map((item) => {
-  return {
-    type: jsPsychHtmlKeyboardResponse,
-    stimulus: `<p>${item.sentence}</p><p><em>Press Y for In Story, N for Not in Story</em></p>`,
-    choices: ["Y", "N"],
-    data: {
-      sentence: item.sentence,
-      correct_response: item.correct_response
-    },
-    on_finish: function (data) {
-      data.correct = data.response === data.correct_response;
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; display: flex; }
+    #container { display: flex; justify-content: space-between; max-width: 1200px; margin: 50px auto; }
+    #instructionsPage { width: 100%; text-align: center; }
+    button { margin-top: 20px; padding: 10px 15px; font-size: 16px; }
+    .hidden { display: none; }
+    .draggable { cursor: grab; position: absolute; z-index: 10; }
+    .text-container {
+      background: rgba(0, 0, 0, 0.5); 
+      color: white;
+      font-size: 22px;
+      width: 400px;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: left;
     }
+    #activityPage {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+    }
+    #storyContainer {
+      background: rgba(0, 0, 0, 0.5); 
+      position: fixed;
+      top: 1%;
+      right: 2%;
+      color: white;
+      font-size: 22px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+      width: 500px;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: left;
+    }
+    .continue-button {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: white;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Instructions Page -->
+<div id="instructionsPage">
+  <h2>Welcome!</h2>
+  <div id="instructionsText">
+    <p>In this study, you will read a short story about some activities on a farm.</p>
+    <p>After reading the story, you will be asked to freely recall as much of the story's details as possible. Please follow the instructions on the next page exactly. Do not read the story more than once unless you are prompted.</p>
+  </div>
+  <button id="nextInstructions">Continue</button>
+</div>
+
+<!-- Activity and Story Page -->
+<div id="activityPage" class="hidden">
+  <!-- Activity -->
+  <img src="background.jpg" id="background" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" />
+  <img src="pig.png" id="pig" class="draggable" style="bottom: 55px; left: 670px; width: 140px; height: 140px;" />
+  <img src="barn.png" id="barn" style="top: 140px; left: 5px; width: 300px; height: 300px; position: absolute;" />
+  <img src="hay.png" id="hay" class="draggable" style="top: 360px; left: 350px; width: 100px; height: 100px;" />
+  <img src="egg.png" id="egg1" class="draggable" style="bottom: 140px; left: 600px; width: 45px; height: 45px;" />
+  <img src="egg2.png" id="egg2" class="draggable" style="bottom: 133px; left: 590px; width: 45px; height: 45px;" />
+  <img src="egg3.png" id="egg3" class="draggable" style="bottom: 134px; left: 618px; width: 45px; height: 45px;" />
+  <img src="egg4.png" id="egg4" class="draggable" style="bottom: 135px; left: 605px; width: 45px; height: 45px;" />
+  <img src="basket.png" id="basket" class="draggable" style="top: 350px; left: 260px; width: 90px; height: 90px;" />
+  <img src="pumpkin.png" id="pumpkin1" class="draggable" style="top: 500px; left: 85px; width: 80px; height: 80px;" />
+  <img src="pumpkin2.png" id="pumpkin2" class="draggable" style="top: 525px; left: 125px; width: 75px; height: 75px;" />
+  <img src="pumpkin3.png" id="pumpkin3" class="draggable" style="top: 525px; left: 40px; width: 70px; height: 70px;" />
+  <img src="watering_can.png" id="watering_can" class="draggable" style="top: 378px; left: 115px; width: 80px; height: 60px;" />
+  <img src="cow.png" id="cow" class="draggable" style="bottom: 0px; left: 400px; width: 170px; height: 170px;" />
+  <img src="chicken.png" id="chicken" class="draggable" style="bottom: 154px; left: 540px; width: 90px; height: 90px;" />
+  <img src="garden.png" id="garden" style="bottom: 0px; right: -10px; width: 270px; height: 210px; position: absolute;" />
+
+  <!-- Story Content on the Right -->
+  <div id="storyContainer">
+    <p>I need to get some work done around the farm.</p>
+    <p>First, I gather the hay and take it to the cow.</p>
+    <p>Next, I collect eggs from the chicken coop and place them in the nearby basket.</p>
+    <p>Then, one by one, I gather the pumpkins from the field and bring them to the pigs.</p>
+    <p>The pigs are hungry, so they run to the pumpkins and begin to munch right away.</p>
+    <p>Finally, I grab the watering can from the barn and water the garden so the vegetables can grow.</p>
+    <p>All the animals are fed, and the farm is taken care of.</p>
+  </div>
+
+  <button class="continue-button" id="continueFromActivity">Continue</button>
+</div>
+
+<script>
+  const conditions = ["text-only", "drag", "imagine", "gesture"];
+  const assignedCondition = conditions[Math.floor(Math.random() * conditions.length)];
+  sessionStorage.setItem("assignedCondition", assignedCondition);
+
+  const instructionTexts = {
+    "text-only": "Please read the story on the next page twice. The story will appear on the next page.",
+    "drag": "Read the story line by line. At the end of each line, use your cursor or mouse to drag the animals and/or objects according to the actions described in the text. For example, if the text reads, 'I put the pizza on the plate,' you should move the image of the pizza on to the plate before reading the next line. Continue this line-by-line until you have read the full story. The story will appear on the next page.",
+    "imagine": "Read the story line by line. At the end of each line imagine the animals and/or objects moving according to the actions described in the text. For example, if the text reads, 'I put the pizza on the plate,' you should look to the image of the pizza and imagine it moving to the plate before reading the next line. Continue this line-by-line until you have read the full story. The story will appear on the next page.",
+    "gesture": "Read the story line by line. At the end of each line gesture toward the animals and/or objects according to the actions described in the text. For example, if the text reads, 'I put the pizza on the plate,' you should look to the image of the pizza and gesture the pizza moving to the plate before reading the next line. Continue this line-by-line until you have read the full story. The story will appear on the next page."
   };
-});
 
-// End screen
-const endScreen = {
-  type: jsPsychHtmlKeyboardResponse,
-  stimulus: `<p>Thanks for completing the task!</p><p>Press any key to continue.</p>`
-};
+  document.getElementById("nextInstructions").addEventListener("click", () => {
+    document.getElementById("instructionsText").innerHTML = `<p>${instructionTexts[assignedCondition]}</p>`;
+    document.getElementById("nextInstructions").textContent = "Start";
+    document.getElementById("nextInstructions").addEventListener("click", () => {
+      document.getElementById("instructionsPage").classList.add("hidden");
+      document.getElementById("activityPage").classList.remove("hidden");
+      enableDragging();
+    }, { once: true });
+  });
 
-// Save data to DataPipe and send to OSF
-const save_data = {
-  type: jsPsychPipe,
-  action: "save",
-  experiment_id: "m2XXEFg230tu",
-  filename: `${jsPsych.randomization.randomID(10)}.csv`,
-  data_string: () => jsPsych.data.get().csv()
-};
+  document.getElementById("continueFromActivity").addEventListener("click", runJsPsych);
 
-// Add all components to the timeline
-timeline.push(...recognitionTrials);
-timeline.push(endScreen);
-timeline.push(save_data);
+  function enableDragging() {
+    const draggables = document.querySelectorAll(".draggable");
+    draggables.forEach(item => {
+      item.addEventListener("mousedown", function (event) {
+        let shiftX = event.clientX - item.getBoundingClientRect().left;
+        let shiftY = event.clientY - item.getBoundingClientRect().top;
+        function moveAt(pageX, pageY) {
+          item.style.left = pageX - shiftX + "px";
+          item.style.top = pageY - shiftY + "px";
+        }
+        function onMouseMove(event) {
+          moveAt(event.pageX, event.pageY);
+        }
+        document.addEventListener("mousemove", onMouseMove);
+        item.addEventListener("mouseup", function () {
+          document.removeEventListener("mousemove", onMouseMove);
+        }, { once: true });
+        item.ondragstart = () => false;
+      });
+    });
+  }
 
-// Run the experiment
-jsPsych.run(timeline);
+  function runJsPsych() {
+    document.body.innerHTML = ""; // Clear current content
+
+    var jsPsych = initJsPsych();
+    var timeline = [];
+
+    timeline.push({
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: "Press Y (for Yes) if the sentence was in the story you read. Press N (for No) if the sentence was not in the story you read."
+    });
+
+    var storySentences = [
+      { sentence: "I need to get some work done around the farm.", correct_response: "Y" },
+      { sentence: "I gather the hay and take it to the cow.", correct_response: "Y" },
+      { sentence: "I collect eggs from the chicken coop.", correct_response: "Y" },
+      { sentence: "I place the eggs in the nearby basket.", correct_response: "Y" },
+      { sentence: "I gather the pumpkins from the field.", correct_response: "Y" },
+      { sentence: "I bring the pumpkins to the pigs.", correct_response: "Y" },
+      { sentence: "The pigs munch the pumpkins right away.", correct_response: "Y" },
+      { sentence: "I grab the watering can from the barn.", correct_response: "Y" },
+      { sentence: "I water the garden so the vegetables can grow.", correct_response: "Y" },
+      { sentence: "All the animals are fed, and the farm is taken care of.", correct_response: "Y" },
+      { sentence: "I milk the cow and carry the bucket to the house.", correct_response: "N" },
+      { sentence: "I find eggs hidden in the hay and wash them.", correct_response: "N" },
+      { sentence: "I carry the pumpkins into the barn for storage.", correct_response: "N" },
+      { sentence: "The pigs roll around in the mud near the field.", correct_response: "N" },
+      { sentence: "I pour water into the trough for the horses.", correct_response: "N" },
+      { sentence: "I use the watering can to fill the animal's bowl.", correct_response: "N" },
+      { sentence: "The chickens run to the corn I’ve spread for them.", correct_response: "N" },
+      { sentence: "I gather tomatoes from the garden.", correct_response: "N" },
+      { sentence: "I load hay onto the tractor to move it around.", correct_response: "N" },
+      { sentence: "All the animals rest while I fix the fence.", correct_response: "N" },
+    ];
+
+    const shuffled = jsPsych.randomization.shuffle(storySentences);
+    timeline.push(...shuffled.map(item => ({
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: `<p>${item.sentence}</p><p><em>Press Y for In Story, N for Not in Story</em></p>`,
+      choices: ["Y", "N"],
+      data: { sentence: item.sentence, correct_response: item.correct_response },
+      on_finish: data => { data.correct = data.response === data.correct_response; }
+    })));
+
+    timeline.push({
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: `<p>Thanks for completing the task!</p><p>Press any key to continue.</p>`
+    });
+
+    timeline.push({
+      type: jsPsychPipe,
+      action: "save",
+      experiment_id: "m2XXEFg230tu",
+      filename: `${jsPsych.randomization.randomID(10)}.csv`,
+      data_string: () => jsPsych.data.get().csv()
+    });
+
+    jsPsych.run(timeline);
+  }
 </script>
+
+</body>
 </html>
