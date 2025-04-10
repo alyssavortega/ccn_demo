@@ -24,12 +24,12 @@
       border-radius: 10px;
       text-align: left;
     }
-    #activityPage {
-      position: relative;
-      width: 100%;
-      height: 100vh;
-      overflow: hidden;
-    }
+   #activityPage {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
     #storyContainer {
       background: rgba(0, 0, 0, 0.5); 
       position: fixed;
@@ -70,23 +70,25 @@
 
 <!-- Activity and Story Page -->
 <div id="activityPage" class="hidden">
-  <!-- Activity -->
-  <img src="background.jpg" id="background" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" />
-  <img src="pig.png" id="pig" class="draggable" style="bottom: 55px; left: 670px; width: 140px; height: 140px;" />
-  <img src="barn.png" id="barn" style="top: 140px; left: 5px; width: 300px; height: 300px; position: absolute;" />
-  <img src="hay.png" id="hay" class="draggable" style="top: 360px; left: 350px; width: 100px; height: 100px;" />
-  <img src="egg.png" id="egg1" class="draggable" style="bottom: 140px; left: 600px; width: 45px; height: 45px;" />
-  <img src="egg2.png" id="egg2" class="draggable" style="bottom: 133px; left: 590px; width: 45px; height: 45px;" />
-  <img src="egg3.png" id="egg3" class="draggable" style="bottom: 134px; left: 618px; width: 45px; height: 45px;" />
-  <img src="egg4.png" id="egg4" class="draggable" style="bottom: 135px; left: 605px; width: 45px; height: 45px;" />
-  <img src="basket.png" id="basket" class="draggable" style="top: 350px; left: 260px; width: 90px; height: 90px;" />
-  <img src="pumpkin.png" id="pumpkin1" class="draggable" style="top: 500px; left: 85px; width: 80px; height: 80px;" />
-  <img src="pumpkin2.png" id="pumpkin2" class="draggable" style="top: 525px; left: 125px; width: 75px; height: 75px;" />
-  <img src="pumpkin3.png" id="pumpkin3" class="draggable" style="top: 525px; left: 40px; width: 70px; height: 70px;" />
-  <img src="watering_can.png" id="watering_can" class="draggable" style="top: 378px; left: 115px; width: 80px; height: 60px;" />
-  <img src="cow.png" id="cow" class="draggable" style="bottom: 0px; left: 400px; width: 170px; height: 170px;" />
-  <img src="chicken.png" id="chicken" class="draggable" style="bottom: 154px; left: 540px; width: 90px; height: 90px;" />
-  <img src="garden.png" id="garden" style="bottom: 0px; right: -10px; width: 270px; height: 210px; position: absolute;" />
+  <!-- Background -->
+  <img src="background.jpg" id="background" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;" />
+
+  <!-- Objects (percent-based positioning) -->
+  <img src="pig.png" id="pig" class="draggable" style="left: 55vw; bottom: 8vh; width: 10vw;" />
+  <img src="barn.png" id="barn" style="left: 0vw; top: 32vh; width: 25vw; position: absolute;" />
+  <img src="hay.png" id="hay" class="draggable" style="left: 30vw; top: 60vh; width: 8vw;" />
+  <img src="egg.png" id="egg1" class="draggable" style="left: 44vw; bottom: 25vh; width: 4vw;" />
+  <img src="egg2.png" id="egg2" class="draggable" style="left: 45vw; bottom: 26vh; width: 4vw;" />
+  <img src="egg3.png" id="egg3" class="draggable" style="left: 46vw; bottom: 25vh; width: 4vw;" />
+  <img src="egg4.png" id="egg4" class="draggable" style="left: 48vw; bottom: 24vh; width: 4vw;" />
+  <img src="basket.png" id="basket" class="draggable" style="left: 23vw; top: 60vh; width: 7vw;" />
+  <img src="pumpkin.png" id="pumpkin1" class="draggable" style="left: 6vw; top: 88vh; width: 7vw;" />
+  <img src="pumpkin2.png" id="pumpkin2" class="draggable" style="left: 10vw; top: 89vh; width: 6vw;" />
+  <img src="pumpkin3.png" id="pumpkin3" class="draggable" style="left: 2vw; top: 89vh; width: 6vw;" />
+  <img src="watering_can.png" id="watering_can" class="draggable" style="left: 10vw; top: 64vh; width: 6vw;" />
+  <img src="cow.png" id="cow" class="draggable" style="left: 18vw; bottom: 5vh; width: 14vw;" />
+  <img src="chicken.png" id="chicken" class="draggable" style="left: 40vw; bottom: 26vh; width: 7vw;" />
+  <img src="garden.png" id="garden" style="right: 2vw; bottom: 5vh; width: 20vw; position: absolute;" />
 
   <!-- Story Content on the Right -->
   <div id="storyContainer">
@@ -98,6 +100,10 @@
     <p>Finally, I grab the watering can from the barn and water the garden so the vegetables can grow.</p>
     <p>All the animals are fed, and the farm is taken care of.</p>
   </div>
+
+  <button class="continue-button" id="continueFromActivity">Continue</button>
+</div>
+
 
   <button class="continue-button" id="continueFromActivity">Continue</button>
 </div>
